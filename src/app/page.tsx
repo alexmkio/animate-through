@@ -56,7 +56,7 @@ const SeamlessTransition = () => {
   }, []);
 
   return (
-    <div className="w-1/4 bg-white rounded-lg shadow-lg backdrop-blur-sm p-6">
+    <div className="w-1/2 bg-white rounded-lg shadow-lg backdrop-blur-sm p-6">
       <div
         style={{
           height: `${isFirst ? firstElementHeight : secondElementHeight}px`,
