@@ -1,101 +1,122 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import classNames from "classnames";
+import React, { useEffect, useRef, useState } from "react";
+
+const SeamlessTransition = () => {
+  const firstElementRef = useRef<HTMLButtonElement>(null);
+  const secondElementRef = useRef<HTMLButtonElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [isFirst, setIsFirst] = useState(true);
+  const [firstElementHeight, setFirstElementHeight] = useState(0);
+  const [secondElementHeight, setSecondElementHeight] = useState(0);
+  const [firstElementVisible, setFirstElementVisible] = useState(true);
+  const [secondElementVisible, setSecondElementVisible] = useState(false);
+  const [hasRendered, setHasRendered] = useState(false);
+
+  const toggleElement = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    setIsFirst(!isFirst);
+
+    if (isFirst) {
+      setSecondElementVisible(true);
+      timeoutRef.current = setTimeout(() => {
+        setFirstElementVisible(false);
+      }, 2000);
+    } else {
+      setFirstElementVisible(true);
+      timeoutRef.current = setTimeout(() => {
+        setSecondElementVisible(false);
+      }, 2000);
+    }
+  };
+
+  useEffect(() => {
+    if (firstElementRef.current) {
+      setFirstElementHeight(firstElementRef?.current?.offsetHeight);
+    }
+    if (secondElementRef.current) {
+      setSecondElementHeight(secondElementRef?.current?.offsetHeight);
+    }
+
+    const timeout = setTimeout(() => setHasRendered(true), 0);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div className="w-1/4 bg-white rounded-lg shadow-lg backdrop-blur-sm p-6">
+      <div
+        style={{
+          height: `${isFirst ? firstElementHeight : secondElementHeight}px`,
+        }}
+        className={classNames(
+          "relative",
+          "container",
+          hasRendered && "has-rendered"
+        )}
+      >
+        <button
+          ref={firstElementRef}
+          style={{ visibility: firstElementVisible ? "visible" : "hidden" }}
+          onClick={toggleElement}
+          className="absolute seamless-transition"
+          data-visible={isFirst}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          <h1 className="text-2xl font-semibold">Seamless Transition</h1>
+          <p className="text-gray-500 mt-2">
+            Lorem ipsum odor amet, consectetuer adipiscing elit. Tellus congue
+            auctor; sed eros diam augue. Varius adipiscing amet ex ut rhoncus
+            quam. Platea tincidunt ultrices morbi netus sociosqu? Conubia felis
+            ornare varius sagittis varius. Maecenas nisl pharetra leo mollis
+            sodales morbi.
+          </p>
+        </button>
+        <button
+          ref={secondElementRef}
+          style={{ visibility: secondElementVisible ? "visible" : "hidden" }}
+          onClick={toggleElement}
+          className="absolute seamless-transition"
+          data-visible={!isFirst}
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <h1 className="text-2xl font-semibold text-blue-700">
+            Transition Seamless
+          </h1>
+          <p className="text-blue-600 mt-2">
+            Imperdiet ultrices malesuada quis tincidunt duis erat interdum.
+            Tempor placerat semper lectus eu; ac tellus imperdiet neque. Tempus
+            felis ultrices tempor sagittis nascetur curae aptent. Afacilisis et
+            eros non rutrum augue? Volutpat metus neque libero bibendum neque
+            ultricies scelerisque. Efficitur tellus odio eros donec diam platea.
+            Efficitur himenaeos odio id ridiculus penatibus placerat integer
+            donec.
+          </p>
+          <p className="text-blue-600 mt-2">
+            Consequat semper praesent massa parturient bibendum gravida litora.
+            Dui cras nisl mauris volutpat bibendum faucibus. Facilisi id libero
+            sodales curabitur amet aliquam. Porta maximus imperdiet non
+            consectetur odio tortor. Id faucibus parturient erat fermentum
+            integer; interdum habitant est at. Dui duis dignissim class
+            adipiscing lorem. Neque nunc imperdiet nisl nec fermentum vivamus
+            non elementum. Feugiat maecenas ornare aptent quis commodo quis ut.
+            Neque porttitor amet montes facilisi cras duis lacinia scelerisque.
+            Condimentum posuere massa libero mollis convallis vehicula.
+          </p>
+        </button>
+      </div>
     </div>
   );
-}
+};
+
+export default SeamlessTransition;
