@@ -5,6 +5,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  interpolate-size: allow-keywords;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -37,4 +38,8 @@ body {
 
 .seamless-transition[data-visible="false"] {
   opacity: 0;
+}
+
+.grid-container {
+  transition: height 2s;
 }
