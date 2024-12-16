@@ -5,7 +5,7 @@ const App = () => {
   return (
     <>
       <Grid />
-      <SeamlessTransition />
+      {/* <SeamlessTransition /> */}
     </>
   );
 };
